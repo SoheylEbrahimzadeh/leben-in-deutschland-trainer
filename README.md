@@ -1,6 +1,6 @@
 # leben-in-deutschland-trainer
 
-Leben-in-Deutschland / Einbürgerungstest prep trainer (Hessen), built for Armin.
+Leben-in-Deutschland / Einbürgerungstest prep trainer (Hessen).
 
 ## Status
 
