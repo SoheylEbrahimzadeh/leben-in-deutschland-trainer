@@ -4,6 +4,13 @@ import { ALL_QUESTIONS } from "../lib/questions.js";
 import { computeStatus, isRedAlert, STATUS } from "../lib/progressStore.js";
 import { shuffle } from "../lib/adaptiveQueue.js";
 import QuestionCard from "../components/QuestionCard.jsx";
+import { CheckCircleIcon, ChevronIcon } from "../components/Icons.jsx";
+
+const GROUPS = [
+  { key: "redAlert", label: "RED ALERT", pillClass: "red-alert", openByDefault: true },
+  { key: STATUS.WEAK, label: "ضعیف · Schwach", pillClass: "weak", openByDefault: true },
+  { key: STATUS.UNCERTAIN, label: "نامطمئن · Unsicher", pillClass: "uncertain", openByDefault: false },
+];
 
 export default function Mistakes() {
   const { state, answer } = useProgress();
@@ -11,30 +18,41 @@ export default function Mistakes() {
   const [sessionKey, setSessionKey] = useState(0);
   const [index, setIndex] = useState(0);
 
-  const weakList = useMemo(() => {
-    const rows = [];
+  const grouped = useMemo(() => {
+    const g = { redAlert: [], [STATUS.WEAK]: [], [STATUS.UNCERTAIN]: [] };
     for (const q of ALL_QUESTIONS) {
       const r = state.perQuestion[q.id];
+      if (isRedAlert(r)) {
+        g.redAlert.push({ q, r });
+        continue;
+      }
       const status = computeStatus(r);
-      if (status === STATUS.WEAK) {
-        rows.push({ q, r, redAlert: isRedAlert(r) });
+      if (status === STATUS.WEAK || status === STATUS.UNCERTAIN) {
+        g[status].push({ q, r });
       }
     }
-    rows.sort((a, b) => (b.redAlert === a.redAlert ? b.r.mistakeCount - a.r.mistakeCount : b.redAlert ? 1 : -1));
-    return rows;
+    for (const key of Object.keys(g)) {
+      g[key].sort((a, b) => b.r.mistakeCount - a.r.mistakeCount);
+    }
+    return g;
   }, [state]);
 
-  const queue = useMemo(() => shuffle(weakList.map((row) => row.q)), [sessionKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const practiceable = useMemo(
+    () => [...grouped.redAlert, ...grouped[STATUS.WEAK], ...grouped[STATUS.UNCERTAIN]].map((row) => row.q),
+    [grouped]
+  );
+  const queue = useMemo(() => shuffle(practiceable), [sessionKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const totalCount = grouped.redAlert.length + grouped[STATUS.WEAK].length + grouped[STATUS.UNCERTAIN].length;
 
   if (practicing) {
     const current = queue[index];
     const finished = index >= queue.length;
     return (
       <div>
-        <h2 className="section-title">تمرین سؤالات ضعیف · Schwache Fragen</h2>
+        <h2 className="section-title">تمرین اشتباهات · Fehler üben</h2>
         {!finished && current && (
           <>
-            <p style={{ color: "var(--text-dim)", fontSize: 12, marginBottom: 8 }}>
+            <p className="text-dim" style={{ fontSize: 12, marginBottom: 8, fontVariantNumeric: "tabular-nums" }}>
               {index + 1} / {queue.length}
             </p>
             <QuestionCard
@@ -47,11 +65,12 @@ export default function Mistakes() {
         )}
         {(finished || queue.length === 0) && (
           <div className="card empty-state">
-            <p className="fa">{queue.length === 0 ? "دیگر سؤال ضعیفی نداری! 🎉" : "تمرین سؤالات ضعیف تمام شد."}</p>
+            <CheckCircleIcon className="empty-icon" />
+            <p className="fa">{queue.length === 0 ? "دیگر سؤال ضعیفی نداری!" : "تمرین اشتباهات تمام شد."}</p>
             <button
               type="button"
               className="btn"
-              style={{ marginTop: 10 }}
+              style={{ marginTop: 14 }}
               onClick={() => {
                 setPracticing(false);
                 setIndex(0);
@@ -68,9 +87,10 @@ export default function Mistakes() {
   return (
     <div>
       <h2 className="section-title">اشتباهات و سؤالات ضعیف · Fehler & schwache Fragen</h2>
-      {weakList.length === 0 ? (
+      {totalCount === 0 ? (
         <div className="card empty-state">
-          <p className="fa">فعلاً هیچ سؤال ضعیف یا RED ALERT‌ای نداری. عالیه! 🎉</p>
+          <CheckCircleIcon className="empty-icon" />
+          <p className="fa">فعلاً هیچ سؤال ضعیف یا RED ALERT‌ای نداری. عالیه!</p>
         </div>
       ) : (
         <>
@@ -83,21 +103,37 @@ export default function Mistakes() {
               setPracticing(true);
             }}
           >
-            تمرین همه سؤالات ضعیف ({weakList.length}) · Alle üben
+            تمرین همه اشتباهات ({totalCount}) · Alle üben
           </button>
-          <div className="card">
-            {weakList.map(({ q, r, redAlert }) => (
-              <div className="progress-row" key={q.id}>
-                <span className="qid">{q.id}</span>
-                <span className="qtext">{q.question}</span>
-                {redAlert ? (
-                  <span className="pill red-alert">RED {r.mistakeCount}</span>
-                ) : (
-                  <span className="pill weak">{r.mistakeCount}x</span>
-                )}
-              </div>
-            ))}
-          </div>
+
+          {GROUPS.map(({ key, label, pillClass, openByDefault }) => {
+            const rows = grouped[key];
+            return (
+              <details key={key} className="card" open={openByDefault && rows.length > 0}>
+                <summary className="group-header">
+                  <span className={`pill ${pillClass}`}>{rows.length}</span>
+                  {label}
+                  <ChevronIcon className="chevron" />
+                </summary>
+                <div className="group-body">
+                  {rows.length === 0 && <p className="group-empty">—</p>}
+                  {rows.map(({ q, r }) => (
+                    <div className="progress-row" key={q.id}>
+                      <span className="qid">{q.id}</span>
+                      <span className="qtext">{q.question}</span>
+                      {key === "redAlert" && <span className="pill red-alert">RED {r.mistakeCount}</span>}
+                      {key === STATUS.WEAK && <span className="pill weak">{r.mistakeCount}x</span>}
+                      {key === STATUS.UNCERTAIN && (
+                        <span className="pill uncertain">
+                          {r.correct}✓/{r.attempts}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </details>
+            );
+          })}
         </>
       )}
     </div>

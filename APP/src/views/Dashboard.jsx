@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useProgress } from "../lib/useProgress.js";
 import { ALL_QUESTIONS, GENERAL_QUESTIONS, HESSEN_QUESTIONS, TOTAL_COUNT } from "../lib/questions.js";
 import { bucketCounts } from "../lib/adaptiveQueue.js";
+import ProgressBar from "../components/ProgressBar.jsx";
+import { SparkIcon, ShieldIcon } from "../components/Icons.jsx";
 
 function recommend(buckets, hessenBuckets, mockExams) {
   if (buckets.redAlert > 0) {
@@ -60,6 +62,22 @@ export default function Dashboard({ navigate }) {
 
   return (
     <div>
+      <div className="hero">
+        <p className="hero-greeting fa">سلام آرمین · Hallo Armin</p>
+        <h1 className="hero-title fa">امروز چقدر آماده‌ای؟</h1>
+
+        <div className="recommend-card">
+          <p className="recommend-eyebrow">
+            <SparkIcon width={13} height={13} />
+            قدم بعدی · Empfohlen
+          </p>
+          <p className="recommend-text fa">پیشنهاد می‌شود الان این کار را انجام بدهی:</p>
+          <button type="button" className="btn" onClick={() => navigate(rec.view)}>
+            {rec.label}
+          </button>
+        </div>
+      </div>
+
       <h2 className="section-title">پیشرفت کلی · Fortschritt ({TOTAL_COUNT} Fragen)</h2>
       <div className="stat-grid">
         <div className="stat-box">
@@ -82,10 +100,15 @@ export default function Dashboard({ navigate }) {
           <div className="value">{totalMistakes}</div>
           <div className="label">مجموع خطاها · Fehler gesamt</div>
         </div>
-        <div className="stat-box">
-          <div className="value">{hessenAttempted}/10</div>
-          <div className="label">هسن · Hessen</div>
+      </div>
+
+      <h2 className="section-title">هسن · Hessen</h2>
+      <div className="card">
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+          <ShieldIcon width={16} height={16} style={{ color: "var(--gold)" }} />
+          <span style={{ fontWeight: 700, fontSize: 14 }}>هسن · Hessen</span>
         </div>
+        <ProgressBar value={hessenAttempted} total={10} />
       </div>
 
       <h2 className="section-title">آزمون آزمایشی · Prüfungssimulation</h2>
@@ -94,20 +117,10 @@ export default function Dashboard({ navigate }) {
           <div className="value">{latestMock ? `${latestMock.correct}/${latestMock.total}` : "—"}</div>
           <div className="label">آخرین نتیجه · Letztes Ergebnis</div>
         </div>
-        <div className="stat-box good">
+        <div className="stat-box gold">
           <div className="value">{bestMock ? `${bestMock.correct}/${bestMock.total}` : "—"}</div>
           <div className="label">بهترین نتیجه · Bestes Ergebnis</div>
         </div>
-      </div>
-
-      <h2 className="section-title">قدم بعدی · Nächster Schritt</h2>
-      <div className="card">
-        <p className="fa" style={{ margin: "0 0 14px", fontSize: 15 }}>
-          پیشنهاد می‌شود الان این کار را انجام بدهی:
-        </p>
-        <button type="button" className="btn" onClick={() => navigate(rec.view)}>
-          {rec.label}
-        </button>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { useProgress } from "../lib/useProgress.js";
 import { GENERAL_QUESTIONS } from "../lib/questions.js";
 import { buildAdaptiveQueue, bucketCounts } from "../lib/adaptiveQueue.js";
 import QuestionCard from "../components/QuestionCard.jsx";
+import { CheckCircleIcon } from "../components/Icons.jsx";
 
 /**
  * Error-first adaptive practice over the 300 General questions.
@@ -39,7 +40,7 @@ export default function Train() {
   return (
     <div>
       <h2 className="section-title">تمرین فعال · Aktives Training (Allgemein)</h2>
-      <div className="stat-grid" style={{ marginBottom: 16 }}>
+      <div className="stat-grid" style={{ marginBottom: 18 }}>
         <div className="stat-box alert">
           <div className="value">{buckets.redAlert}</div>
           <div className="label">RED ALERT</div>
@@ -60,7 +61,7 @@ export default function Train() {
 
       {!finished && current && (
         <>
-          <p style={{ color: "var(--text-dim)", fontSize: 12, marginBottom: 8 }}>
+          <p className="text-dim" style={{ fontSize: 12, marginBottom: 8, fontVariantNumeric: "tabular-nums" }}>
             {index + 1} / {queue.length}
           </p>
           <QuestionCard key={current.id + sessionKey} question={current} onAnswer={handleAnswer} onNext={handleNext} />
@@ -69,8 +70,9 @@ export default function Train() {
 
       {finished && (
         <div className="card empty-state">
-          <p className="fa">این دوره تمرین تمام شد! 🎉</p>
-          <button type="button" className="btn" style={{ marginTop: 10 }} onClick={restart}>
+          <CheckCircleIcon className="empty-icon" />
+          <p className="fa">این دوره تمرین تمام شد!</p>
+          <button type="button" className="btn" style={{ marginTop: 14 }} onClick={restart}>
             شروع دوره جدید · Neue Runde
           </button>
         </div>

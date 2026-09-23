@@ -3,6 +3,8 @@ import { useProgress } from "../lib/useProgress.js";
 import { ALL_QUESTIONS, getQuestionById } from "../lib/questions.js";
 import { buildMockExam, scoreMockExam, MOCK_EXAM_TOTAL, MOCK_EXAM_GENERAL_COUNT, MOCK_EXAM_HESSEN_COUNT } from "../lib/mockExam.js";
 import QuestionCard from "../components/QuestionCard.jsx";
+import ProgressBar from "../components/ProgressBar.jsx";
+import { ExamIcon, CheckCircleIcon, XCircleIcon } from "../components/Icons.jsx";
 
 export default function MockExam() {
   const { submitMockExam } = useProgress();
@@ -41,7 +43,11 @@ export default function MockExam() {
     return (
       <div>
         <h2 className="section-title">آزمون آزمایشی · Prüfungssimulation</h2>
-        <div className="card">
+        <div className="card gold-outline">
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <ExamIcon width={18} height={18} style={{ color: "var(--gold)" }} />
+            <span style={{ fontWeight: 800, fontSize: 15 }}>{MOCK_EXAM_TOTAL} سؤال · Fragen</span>
+          </div>
           <p className="fa" style={{ marginTop: 0 }}>
             {MOCK_EXAM_TOTAL} سؤال ({MOCK_EXAM_GENERAL_COUNT} عمومی + {MOCK_EXAM_HESSEN_COUNT} هسن)، دقیقاً مثل آزمون واقعی. در حین
             آزمون هیچ ترجمه، راهنمایی یا پاسخ درستی نمایش داده نمی‌شود.
@@ -56,24 +62,26 @@ export default function MockExam() {
 
   if (phase === "running") {
     const current = examQuestions[index];
-    const pct = Math.round((index / examQuestions.length) * 100);
     return (
-      <div>
-        <p style={{ color: "var(--text-dim)", fontSize: 12, marginBottom: 6 }}>
-          سؤال {index + 1} / {examQuestions.length}
-        </p>
-        <div className="exam-progress-bar">
-          <div className="fill" style={{ width: `${pct}%` }} />
+      <div className="exam-shell">
+        <div className="exam-header">
+          <span>آزمون آزمایشی · Prüfung</span>
+          <span className="exam-counter">
+            {index + 1} / {examQuestions.length}
+          </span>
         </div>
-        <QuestionCard
-          key={current.id}
-          question={current}
-          examMode
-          initialSelected={answers[current.id] ?? null}
-          onAnswer={handleAnswer}
-          onNext={handleNext}
-          nextLabel={index + 1 < examQuestions.length ? "بعدی · Weiter" : "پایان و نتیجه · Abschließen"}
-        />
+        <ProgressBar value={index} total={examQuestions.length} thin showCount={false} />
+        <div style={{ marginTop: 14 }}>
+          <QuestionCard
+            key={current.id}
+            question={current}
+            examMode
+            initialSelected={answers[current.id] ?? null}
+            onAnswer={handleAnswer}
+            onNext={handleNext}
+            nextLabel={index + 1 < examQuestions.length ? "بعدی · Weiter" : "پایان و نتیجه · Abschließen"}
+          />
+        </div>
       </div>
     );
   }
@@ -82,21 +90,21 @@ export default function MockExam() {
   const passed = result.correct >= 17; // real exam requires 17/33
   return (
     <div>
-      <h2 className="section-title">نتیجه آزمون · Ergebnis</h2>
-      <div className="stat-grid" style={{ marginBottom: 16 }}>
-        <div className={`stat-box ${passed ? "good" : "alert"}`}>
-          <div className="value">
-            {result.correct}/{result.total}
-          </div>
-          <div className="label">درست · Richtig</div>
+      <div className="exam-result-hero">
+        <div className={`exam-result-icon ${passed ? "pass" : "fail"}`}>
+          {passed ? <CheckCircleIcon /> : <XCircleIcon />}
         </div>
-        <div className="stat-box">
-          <div className="value">{result.percentage}%</div>
-          <div className="label">درصد</div>
+        <div className="exam-result-score">
+          {result.correct}
+          <span className="of"> / {result.total}</span>
         </div>
+        <p className="text-dim" style={{ marginTop: 4, fontSize: 13 }}>
+          {result.percentage}٪
+        </p>
       </div>
+
       <div className="card">
-        <p className="fa" style={{ marginTop: 0 }}>
+        <p className="fa" style={{ marginTop: 0, marginBottom: 0 }}>
           {passed
             ? "حداقل ۱۷ از ۳۳ (آستانه قبولی رسمی) را داری. برای رسیدن به هدف تمرینی ۳۳/۳۳ اپلیکیشن، ادامه بده."
             : "به ۱۷ از ۳۳ (حداقل رسمی برای قبولی) نرسیدی — روی سؤالات اشتباه بیشتر تمرین کن."}

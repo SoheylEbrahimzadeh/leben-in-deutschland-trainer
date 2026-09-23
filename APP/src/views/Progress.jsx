@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useProgress } from "../lib/useProgress.js";
 import { ALL_QUESTIONS, TOTAL_COUNT } from "../lib/questions.js";
 import { computeStatus, isRedAlert, STATUS } from "../lib/progressStore.js";
+import { ChevronIcon } from "../components/Icons.jsx";
 
 const GROUPS = [
   { key: "redAlert", label: "RED ALERT", pillClass: "red-alert" },
@@ -31,27 +32,24 @@ export default function Progress() {
 
   return (
     <div>
-      <h2 className="section-title">
-        پیشرفت کامل · Voller Fortschritt ({TOTAL_COUNT})
-      </h2>
+      <h2 className="section-title">پیشرفت کامل · Voller Fortschritt ({TOTAL_COUNT})</h2>
 
       {GROUPS.map(({ key, label, pillClass }) => {
         const rows = grouped[key];
         return (
           <details key={key} className="card" open={key === "redAlert" && rows.length > 0}>
-            <summary style={{ cursor: "pointer", fontWeight: 700 }}>
-              <span className={`pill ${pillClass}`} style={{ marginRight: 8 }}>
-                {rows.length}
-              </span>
+            <summary className="group-header">
+              <span className={`pill ${pillClass}`}>{rows.length}</span>
               {label}
+              <ChevronIcon className="chevron" />
             </summary>
-            <div style={{ marginTop: 10 }}>
-              {rows.length === 0 && <p style={{ color: "var(--text-dim)", fontSize: 13 }}>—</p>}
+            <div className="group-body">
+              {rows.length === 0 && <p className="group-empty">—</p>}
               {rows.map(({ q, r }) => (
                 <div className="progress-row" key={q.id}>
                   <span className="qid">{q.id}</span>
                   <span className="qtext">{q.question}</span>
-                  <span style={{ color: "var(--text-dim)", fontSize: 12 }}>
+                  <span className="text-dim" style={{ fontSize: 12, fontVariantNumeric: "tabular-nums" }}>
                     {r ? `${r.correct}✓/${r.wrong}✗` : "—"}
                   </span>
                 </div>
@@ -74,8 +72,8 @@ export default function Progress() {
             </p>
             <button
               type="button"
-              className="btn"
-              style={{ background: "var(--bad)", marginBottom: 10 }}
+              className="btn danger"
+              style={{ marginBottom: 10 }}
               onClick={() => {
                 resetAll();
                 setConfirmingReset(false);
