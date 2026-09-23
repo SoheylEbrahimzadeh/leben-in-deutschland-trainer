@@ -1,0 +1,23 @@
+{
+  "name": "leben-in-deutschland-trainer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "parse-data": "node scripts/parse-data.mjs",
+    "prebuild": "node scripts/parse-data.mjs",
+    "predev": "node scripts/parse-data.mjs",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node scripts/parse-data.mjs && node test/run-tests.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.8"
+  }
+}

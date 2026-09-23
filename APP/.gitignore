@@ -1,0 +1,5 @@
+node_modules
+dist
+src/data/questions.generated.json
+src/data/parse-report.generated.json
+.DS_Store
