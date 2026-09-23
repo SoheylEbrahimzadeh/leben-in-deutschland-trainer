@@ -59,6 +59,8 @@ export function buildAdaptiveQueue(questions, perQuestion, { rng = Math.random, 
       result.push(shuffledMastered[masteredIdx++]);
     }
   }
+  // If the primary queue is short (e.g. almost everything mastered), append
+  // the rest of the mastered pool so "Train" still has something to show.
   while (masteredIdx < shuffledMastered.length) {
     result.push(shuffledMastered[masteredIdx++]);
   }
