@@ -124,8 +124,22 @@ body {
   padding: 13px 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
+}
+
+.app-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline-end: auto;
+}
+
+/* Keeps the brand block visually centered when there's no account button
+   (cloud sync not configured yet) so the header looks identical to before
+   Part 3 in that case. */
+.app-header-inner:has(> .app-header-brand:only-child) {
+  justify-content: center;
 }
 
 .app-brand-mark {
@@ -846,6 +860,341 @@ details[open] > .group-header .chevron {
 .exam-result-score .of {
   color: var(--text-faint);
   font-weight: 700;
+}
+
+/* =========================================================================
+   Exam review (per-question accordion replay of a completed mock exam)
+   ========================================================================= */
+
+.exam-review {
+  margin-top: 4px;
+}
+
+.exam-review-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.exam-review-filter button {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.exam-review-filter button.active {
+  background: var(--gold-soft);
+  border-color: var(--gold-soft-strong);
+  color: var(--gold);
+}
+
+.exam-review-row {
+  padding: 14px 16px;
+}
+
+.exam-review-row .review-status {
+  width: 19px;
+  height: 19px;
+  flex: none;
+}
+
+.exam-review-row .review-status.correct {
+  color: var(--good);
+}
+
+.exam-review-row .review-status.incorrect {
+  color: var(--bad);
+}
+
+.exam-review-row .review-label {
+  font-size: 13.5px;
+}
+
+.exam-review-row .review-qid {
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: -3px;
+}
+
+/* Flatten the QuestionCard's own .card chrome so it doesn't double up
+   inside the accordion's already-bordered .card row. */
+.exam-review-row .group-body {
+  margin-top: 10px;
+}
+
+.exam-review-row .group-body .card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+/* =========================================================================
+   Account / cloud-sync UI (header button, sign in/up modal, migration
+   prompt) — reuses the same tokens/components as the rest of the app so
+   authentication never looks like a bolted-on separate product.
+   ========================================================================= */
+
+.account-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 7px 12px 7px 8px;
+  cursor: pointer;
+  flex: none;
+  max-width: 168px;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.account-btn:hover {
+  border-color: var(--gold-soft-strong);
+  color: var(--text);
+}
+
+.account-btn-skeleton {
+  width: 34px;
+  height: 30px;
+  opacity: 0.5;
+}
+
+.account-btn-signed-in {
+  padding: 5px 12px 5px 5px;
+}
+
+.account-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(155deg, var(--gold) 0%, #a8842a 100%);
+  color: var(--on-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  flex: none;
+}
+
+.account-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 110px;
+}
+
+/* Compact on narrow screens: icon/avatar only, no label. */
+@media (max-width: 419px) {
+  .account-btn .account-label {
+    display: none;
+  }
+  .account-btn {
+    padding: 8px;
+  }
+  .account-btn-signed-in {
+    padding: 3px;
+  }
+}
+
+.account-menu {
+  position: relative;
+  flex: none;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  inset-inline-end: 0;
+  width: 232px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-pop);
+  padding: 14px;
+  z-index: 20;
+}
+
+.account-dropdown-email {
+  font-size: 12.5px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-dropdown-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  margin-top: 4px;
+}
+
+.account-dropdown-logout {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border);
+  color: var(--bad);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 11px 0 0;
+  margin-top: 11px;
+  cursor: pointer;
+}
+
+/* --- Modal (sign in/up panel, migration prompt) --- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(6, 7, 9, 0.72);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+
+.modal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-pop);
+  padding: 20px 18px calc(20px + var(--safe-bottom));
+  width: 100%;
+  max-width: 420px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.modal-close {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  cursor: pointer;
+  flex: none;
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.auth-tabs button {
+  flex: 1;
+  padding: 10px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-tabs button.active {
+  background: var(--gold-soft);
+  border-color: var(--gold-soft-strong);
+  color: var(--gold);
+}
+
+.form-field {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.form-field span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-field input {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 15px;
+  padding: 12px 13px;
+  min-height: 46px;
+  direction: ltr;
+  text-align: left;
+}
+
+.form-field input:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 1px;
+  border-color: var(--gold-soft-strong);
+}
+
+.form-error {
+  color: var(--bad);
+  font-size: 13px;
+  margin: -2px 0 12px;
+}
+
+.form-info {
+  color: var(--good);
+  font-size: 13px;
+  margin: -2px 0 12px;
+}
+
+@media (min-width: 480px) {
+  .modal-overlay {
+    align-items: center;
+  }
+  .modal-card {
+    border-radius: var(--radius-lg);
+  }
 }
 
 /* =========================================================================

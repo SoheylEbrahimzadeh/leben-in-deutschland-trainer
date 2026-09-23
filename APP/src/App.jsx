@@ -6,6 +6,8 @@ import Hessen from "./views/Hessen.jsx";
 import MockExam from "./views/MockExam.jsx";
 import Progress from "./views/Progress.jsx";
 import { HomeIcon, BookIcon, AlertIcon, ShieldIcon, ExamIcon, ChartIcon } from "./components/Icons.jsx";
+import AccountMenu from "./components/AccountMenu.jsx";
+import MigrationPrompt from "./components/MigrationPrompt.jsx";
 
 const TABS = [
   { key: "dashboard", label: "داشبورد", Icon: HomeIcon, Component: Dashboard },
@@ -25,15 +27,20 @@ export default function App() {
     <>
       <header className="app-header">
         <div className="app-header-inner">
-          <div className="app-brand-mark" aria-hidden="true">
-            <ShieldIcon width={15} height={15} strokeWidth={2.3} />
+          <div className="app-header-brand">
+            <div className="app-brand-mark" aria-hidden="true">
+              <ShieldIcon width={15} height={15} strokeWidth={2.3} />
+            </div>
+            <div className="app-header-text">
+              <h1>LiD Trainer · Hessen</h1>
+              <div className="subtitle">Leben in Deutschland — 300 + 10 Fragen</div>
+            </div>
           </div>
-          <div className="app-header-text">
-            <h1>LiD Trainer · Hessen</h1>
-            <div className="subtitle">Leben in Deutschland — 300 + 10 Fragen</div>
-          </div>
+          <AccountMenu />
         </div>
       </header>
+
+      <MigrationPrompt />
 
       <main className="app-main">
         <ActiveComponent navigate={setView} />
