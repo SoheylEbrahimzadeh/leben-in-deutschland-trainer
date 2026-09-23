@@ -3,3 +3,6 @@ dist
 src/data/questions.generated.json
 src/data/parse-report.generated.json
 .DS_Store
+.env
+.env.local
+.env.*.local

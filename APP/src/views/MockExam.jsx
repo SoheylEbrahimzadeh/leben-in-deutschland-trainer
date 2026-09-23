@@ -1,14 +1,18 @@
 import { useState } from "react";
 import { useProgress } from "../lib/useProgress.js";
-import { ALL_QUESTIONS, getQuestionById } from "../lib/questions.js";
+import { ALL_QUESTIONS } from "../lib/questions.js";
 import { buildMockExam, scoreMockExam, MOCK_EXAM_TOTAL, MOCK_EXAM_GENERAL_COUNT, MOCK_EXAM_HESSEN_COUNT } from "../lib/mockExam.js";
 import QuestionCard from "../components/QuestionCard.jsx";
 import ProgressBar from "../components/ProgressBar.jsx";
+import ExamReview from "../components/ExamReview.jsx";
 import { ExamIcon, CheckCircleIcon, XCircleIcon } from "../components/Icons.jsx";
 
 export default function MockExam() {
-  const { submitMockExam } = useProgress();
-  const [phase, setPhase] = useState("idle"); // idle | running | done
+  const { state, submitMockExam } = useProgress();
+  // Older persisted exam-history entries (from before the review feature)
+  // may not carry a `results` array — only exams that do can be reviewed.
+  const lastReviewable = [...state.mockExams].reverse().find((e) => Array.isArray(e.results));
+  const [phase, setPhase] = useState("idle"); // idle | running | done | reviewingLast
   const [examQuestions, setExamQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
   const [index, setIndex] = useState(0);
@@ -56,6 +60,36 @@ export default function MockExam() {
             شروع آزمون · Prüfung starten
           </button>
         </div>
+
+        {lastReviewable && (
+          <button type="button" className="btn secondary" onClick={() => setPhase("reviewingLast")}>
+            مرور آخرین آزمون ({lastReviewable.correct}/{lastReviewable.total}) · Letzte Prüfung ansehen
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  if (phase === "reviewingLast" && lastReviewable) {
+    return (
+      <div>
+        <h2 className="section-title">مرور آخرین آزمون · Prüfungsrückblick</h2>
+        <div className="exam-result-hero">
+          <div className={`exam-result-icon ${lastReviewable.correct >= 17 ? "pass" : "fail"}`}>
+            {lastReviewable.correct >= 17 ? <CheckCircleIcon /> : <XCircleIcon />}
+          </div>
+          <div className="exam-result-score">
+            {lastReviewable.correct}
+            <span className="of"> / {lastReviewable.total}</span>
+          </div>
+          <p className="text-dim" style={{ marginTop: 4, fontSize: 13 }}>
+            {lastReviewable.percentage}٪
+          </p>
+        </div>
+        <ExamReview results={lastReviewable.results} />
+        <button type="button" className="btn secondary" onClick={() => setPhase("idle")}>
+          بازگشت · Zurück
+        </button>
       </div>
     );
   }
@@ -111,23 +145,10 @@ export default function MockExam() {
         </p>
       </div>
 
-      {result.mistakes.length > 0 && (
+      {Array.isArray(result.results) && (
         <>
-          <h2 className="section-title">سؤالات اشتباه · Fehler ({result.mistakes.length})</h2>
-          <div className="card">
-            {result.mistakes.map((m) => {
-              const q = getQuestionById(m.id);
-              return (
-                <div className="progress-row" key={m.id}>
-                  <span className="qid">{m.id}</span>
-                  <span className="qtext">{q?.question}</span>
-                  <span className="pill weak">
-                    {m.selected ?? "—"}→{m.correct}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          <h2 className="section-title">مرور آزمون · Prüfungsrückblick</h2>
+          <ExamReview key={result.date} results={result.results} />
         </>
       )}
 
