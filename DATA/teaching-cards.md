@@ -1,6 +1,6 @@
 # DATA/teaching-cards.md
 
-Bilingual (German + Persian) teaching cards for Armin's Leben-in-Deutschland /
+Bilingual (German + Persian) teaching cards for Leben-in-Deutschland /
 Einbürgerungstest prep (Hessen). The German question, A/B/C/D options, and
 CORRECT ANSWER fields are copied verbatim from the verified source
 (DATA/bamf-general-300.md / DATA/hessen-10.md) and are NOT re-answered or
