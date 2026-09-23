@@ -30,7 +30,21 @@ jobs:
         run: npm test
       - name: Build
         working-directory: APP
+        # VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY are optional repo
+        # secrets (Settings -> Secrets and variables -> Actions). Both are
+        # PUBLIC/client-safe values (Supabase project URL + anon/public
+        # key, protected by supabase/schema.sql's Row Level Security) that
+        # Vite bakes into the static bundle at build time — this is the
+        # normal, documented way to configure a Supabase client-side app on
+        # a static host. The Supabase SERVICE-ROLE key must never be set
+        # here or anywhere else in this repo. Until these secrets are set,
+        # both env vars are empty strings and the app runs in guest/local-
+        # only mode (see APP/src/lib/supabaseClient.js), so leaving them
+        # unset is always safe.
         run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: APP/dist
