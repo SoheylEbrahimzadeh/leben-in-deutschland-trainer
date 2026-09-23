@@ -10,7 +10,7 @@ Data phase: COMPLETE. Learning engine, mock exam, dashboard, mobile app UI: COMP
 
 `APP/` is a mobile-first Vite + React single-page app, deployed via GitHub Pages on every push to `main`.
 
-Once deployment finishes: **https://SoheylEbrahimzadeh.github.io/leben-in-deutschland-trainer/**
+Once deployment finishes: **https://soheylebrahimzadeh.github.io/leben-in-deutschland-trainer/**
 
 ## What the app does
 
