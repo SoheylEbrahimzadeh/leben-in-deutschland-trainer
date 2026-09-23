@@ -149,6 +149,41 @@ export function ImageIcon(props) {
   );
 }
 
+export function UserIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <circle cx="12" cy="8.2" r="3.6" />
+      <path d="M4.5 20c1.2-4 4-6 7.5-6s6.3 2 7.5 6" />
+    </svg>
+  );
+}
+
+export function LogOutIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M9 4.5H6a1.5 1.5 0 0 0-1.5 1.5v12A1.5 1.5 0 0 0 6 19.5h3" />
+      <path d="M15 8l4 4-4 4M19 12H9" />
+    </svg>
+  );
+}
+
+export function CloudIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M7 18.5a4.5 4.5 0 0 1-.5-8.98A5.5 5.5 0 0 1 17.2 8.1 4 4 0 0 1 17 16" />
+      <path d="M7 18.5h10" />
+    </svg>
+  );
+}
+
+export function CloseIcon(props) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  );
+}
+
 export function SparkIcon(props) {
   return (
     <svg {...base} {...props}>

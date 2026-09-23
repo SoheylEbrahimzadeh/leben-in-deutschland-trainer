@@ -30,6 +30,7 @@ export default function QuestionCard({
   onNext, // () => void — called when the learner is ready to move on
   nextLabel = "بعدی · Weiter",
   initialSelected = null,
+  hideNext = false, // true for read-only review contexts (e.g. exam-review accordion): no "Next" button
 }) {
   const [selected, setSelected] = useState(initialSelected);
   const answered = selected !== null;
@@ -164,13 +165,15 @@ export default function QuestionCard({
             </div>
           )}
 
-          <button type="button" className="btn" style={{ marginTop: 18 }} onClick={onNext}>
-            {nextLabel}
-          </button>
+          {!hideNext && (
+            <button type="button" className="btn" style={{ marginTop: 18 }} onClick={onNext}>
+              {nextLabel}
+            </button>
+          )}
         </>
       )}
 
-      {examMode && (
+      {examMode && !hideNext && (
         <button type="button" className="btn" style={{ marginTop: 6 }} disabled={!answered} onClick={onNext}>
           {nextLabel}
         </button>
