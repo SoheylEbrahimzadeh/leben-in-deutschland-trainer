@@ -1,4 +1,14 @@
 import { useState } from "react";
+import {
+  ImageIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  TranslateIcon,
+  AnswerIcon,
+  BulbIcon,
+  TrapIcon,
+  KeyIcon,
+} from "./Icons.jsx";
 
 const LETTERS = ["A", "B", "C", "D"];
 
@@ -35,11 +45,18 @@ export default function QuestionCard({
     onAnswer?.(letter);
   }
 
+  const isCorrect = answered && selected === question.correctAnswer;
+
   return (
     <div className="card">
       <div className="question-meta">
-        <span>{question.id}</span>
-        {question.visual && <span title="Bildfrage / سؤال تصویری">🖼️ Bildfrage</span>}
+        <span className="qid-tag">{question.id}</span>
+        {question.visual && (
+          <span className="qid-tag" title="Bildfrage / سؤال تصویری">
+            <ImageIcon width={13} height={13} style={{ verticalAlign: "-2px", marginInlineEnd: 4 }} />
+            Bildfrage
+          </span>
+        )}
       </div>
       <div className="question-text">{question.question}</div>
 
@@ -51,7 +68,7 @@ export default function QuestionCard({
           if (isCorrectLetter) cls += " correct";
           else if (isSelected) cls += " incorrect";
         } else if (examMode && isSelected) {
-          cls += " correct"; // reuse the accent styling as a neutral "selected" look
+          cls += " selected";
         }
         return (
           <button
@@ -69,46 +86,85 @@ export default function QuestionCard({
 
       {!examMode && answered && (
         <>
-          <div className={`feedback-banner ${selected === question.correctAnswer ? "correct" : "incorrect"}`}>
-            {selected === question.correctAnswer
-              ? "درست بود! ✓ Richtig!"
-              : `اشتباه بود ✗ Falsch — richtig: ${question.correctAnswer}`}
+          <div className={`feedback-banner ${isCorrect ? "correct" : "incorrect"}`}>
+            {isCorrect ? (
+              <>
+                <CheckCircleIcon />
+                <span className="fa">درست بود! · Richtig</span>
+              </>
+            ) : (
+              <>
+                <XCircleIcon />
+                <span className="fa">
+                  اشتباه بود · Falsch — پاسخ درست: {question.correctAnswer}
+                </span>
+              </>
+            )}
           </div>
 
           {question.persian && (
             <div className="explain-block">
-              <div className="explain-label">ترجمه فارسی</div>
-              <p className="explain-text fa">{question.persian.translation}</p>
+              <div className="explain-item">
+                <div className="explain-label">
+                  <TranslateIcon />
+                  ترجمه فارسی
+                </div>
+                <p className="explain-text fa">{question.persian.translation}</p>
+              </div>
 
-              <div className="explain-label">پاسخ درست</div>
-              <p className="explain-text fa">{question.persian.correctAnswerPersian}</p>
+              <div className="explain-item">
+                <div className="explain-label">
+                  <AnswerIcon />
+                  پاسخ درست
+                </div>
+                <p className="explain-text fa">{question.persian.correctAnswerPersian}</p>
+              </div>
 
-              <div className="explain-label">توضیح ساده</div>
-              <p className="explain-text fa">{question.persian.explanation}</p>
+              <div className="explain-item">
+                <div className="explain-label">
+                  <BulbIcon />
+                  توضیح ساده
+                </div>
+                <p className="explain-text fa">{question.persian.explanation}</p>
+              </div>
 
-              <div className="explain-label">ترفند حفظ کردن</div>
-              <p className="explain-text fa">{question.persian.memoryTrick}</p>
+              <div className="explain-item">
+                <div className="explain-label">
+                  <BulbIcon />
+                  ترفند حفظ کردن
+                </div>
+                <p className="explain-text fa">{question.persian.memoryTrick}</p>
+              </div>
 
               {question.persian.trap && (
-                <>
-                  <div className="explain-label">تله رایج</div>
+                <div className="explain-item">
+                  <div className="explain-label">
+                    <TrapIcon />
+                    تله رایج
+                  </div>
                   <p className="explain-text fa">{question.persian.trap}</p>
-                </>
+                </div>
               )}
 
               {question.persian.keywords?.length > 0 && (
-                <div>
-                  {question.persian.keywords.map((k) => (
-                    <span className="keyword-chip" key={k}>
-                      {k}
-                    </span>
-                  ))}
+                <div className="explain-item">
+                  <div className="explain-label">
+                    <KeyIcon />
+                    کلیدواژه‌ها
+                  </div>
+                  <div className="keyword-row">
+                    {question.persian.keywords.map((k) => (
+                      <span className="keyword-chip" key={k}>
+                        {k}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           )}
 
-          <button type="button" className="btn" style={{ marginTop: 6 }} onClick={onNext}>
+          <button type="button" className="btn" style={{ marginTop: 18 }} onClick={onNext}>
             {nextLabel}
           </button>
         </>
