@@ -1,6 +1,6 @@
 # DATA/question-index.md
 
-Master index of all 310 questions in the verified BAMF dataset for Armin's
+Master index of all 310 questions in the verified BAMF dataset for
 Leben-in-Deutschland / Einbürgerungstest prep (Hessen). Generated
 programmatically from DATA/bamf-general-300.md and DATA/hessen-10.md during
 the 2026-09-22 final data-integrity + merge pass. Counts here are
