@@ -29,8 +29,19 @@ export function buildMockExam(questions, { rng = Math.random } = {}) {
   return combined;
 }
 
-/** Scores a completed mock exam. `answers` maps questionId -> selected letter. */
+/**
+ * Scores a completed mock exam. `answers` maps questionId -> selected letter.
+ *
+ * `results` preserves the FULL exam in its original question order (all 33,
+ * not just the mistakes) as {id, selected, correct, isCorrect} — this is
+ * what the exam-review screen replays. It intentionally stores only the
+ * question id, never a copy of the question text/options: those are looked
+ * up from the immutable generated question data by id, so the verified
+ * source is never duplicated. `mistakes` is kept for backward compatibility
+ * with existing callers/persisted history entries.
+ */
 export function scoreMockExam(examQuestions, answers) {
+  const results = [];
   const mistakes = [];
   let correctCount = 0;
   for (const q of examQuestions) {
@@ -38,6 +49,7 @@ export function scoreMockExam(examQuestions, answers) {
     const isCorrect = selected === q.correctAnswer;
     if (isCorrect) correctCount += 1;
     else mistakes.push({ id: q.id, selected, correct: q.correctAnswer });
+    results.push({ id: q.id, selected, correct: q.correctAnswer, isCorrect });
   }
   const total = examQuestions.length;
   return {
@@ -47,5 +59,16 @@ export function scoreMockExam(examQuestions, answers) {
     wrong: total - correctCount,
     percentage: Math.round((correctCount / total) * 1000) / 10,
     mistakes,
+    results,
   };
+}
+
+/**
+ * Pure filter used by the exam-review UI: "all" keeps everything, "wrong"
+ * keeps only incorrect answers. Extracted as a standalone function so it is
+ * unit-testable without a browser/DOM.
+ */
+export function filterExamResults(results, mode = "all") {
+  if (mode === "wrong") return results.filter((r) => !r.isCorrect);
+  return results;
 }

@@ -138,3 +138,17 @@ export function resetAllProgress() {
   saveState(cachedState);
   notify();
 }
+
+/**
+ * Replaces the whole local state (persists + notifies), used by the cloud
+ * sync layer to apply a login-time merge result. Kept as a thin, explicit
+ * function rather than exposing `cachedState` directly, so every write
+ * still goes through the same persist+notify path as recordAnswer/
+ * recordMockExam.
+ */
+export function replaceState(nextState) {
+  cachedState = { ...emptyState(), ...nextState };
+  saveState(cachedState);
+  notify();
+  return cachedState;
+}
