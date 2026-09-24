@@ -32,7 +32,7 @@ export default function App() {
               <ShieldIcon width={15} height={15} strokeWidth={2.3} />
             </div>
             <div className="app-header-text">
-              <h1>LiD Trainer · Hessen</h1>
+              <h1>Leben in Deutschland Trainer · Hessen</h1>
               <div className="subtitle">Leben in Deutschland — 300 + 10 Fragen</div>
             </div>
           </div>
