@@ -63,7 +63,7 @@ export default function Dashboard({ navigate }) {
   return (
     <div>
       <div className="hero">
-        <p className="hero-greeting fa">سلام آرمین · Hallo Armin</p>
+        <p className="hero-greeting fa">سلام  · Hallo </p>
         <h1 className="hero-title fa">امروز چقدر آماده‌ای؟</h1>
 
         <div className="recommend-card">
